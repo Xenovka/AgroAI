@@ -3,6 +3,7 @@
     <string name="display_name">AgroAI.</string>
     <string name="welcome_title">Healthy plants.\nHappy farmers.</string>
     <string name="register">Register</string>
+    <string name="login">Login</string>
     <string name="continue_as_guest">CONTINUE AS GUEST</string>
     <string name="back">Back</string>
 </resources>
