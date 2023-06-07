@@ -97,7 +97,7 @@ fun WelcomeScreen(
                     .height(60.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.register),
+                    text = stringResource(R.string.register).uppercase(),
                     fontSize = 16.sp,
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Bold,
