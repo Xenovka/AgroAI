@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AgroAI</string>
+    <string name="home_page">Home</string>
+    <string name="history_page">History</string>
+    <string name="profile_page">Profile</string>
     <string name="display_name">AgroAI.</string>
     <string name="welcome_title">Healthy plants.\nHappy farmers.</string>
     <string name="register">Register</string>
