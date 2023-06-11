@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +29,7 @@ import com.capstone.agroai.R
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
+import com.capstone.agroai.ui.theme.Primary200
 import com.capstone.agroai.ui.theme.Primary400
 import com.capstone.agroai.ui.theme.Primary900
 
@@ -88,8 +86,10 @@ fun WelcomeScreen(
             Button(
                 onClick = {},
                 colors = ButtonDefaults.textButtonColors(
-                    containerColor = Primary400
+                    containerColor = Primary400,
+                    disabledContainerColor = Primary200
                 ),
+                enabled = false,
                 shape = RectangleShape,
                 modifier = modifier
                     .padding(top = 37.dp, bottom = 15.dp)
