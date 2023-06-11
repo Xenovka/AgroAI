@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -24,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -38,6 +42,7 @@ import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
 import com.capstone.agroai.ui.theme.Primary400
+import com.capstone.agroai.ui.theme.Primary600
 import com.capstone.agroai.ui.theme.Primary900
 
 @Composable
@@ -125,6 +130,94 @@ fun HomeScreen(
                     .align(Alignment.CenterEnd)
                     .padding(horizontal = 12.dp)
             )
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(horizontal = 30.dp)
+                .background(Primary600)
+        ) {
+            Text(
+                text = "Your Image",
+                fontFamily = Montserrat,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+            )
+        }
+
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = Primary400
+            ),
+            shape = RectangleShape,
+            modifier = modifier
+                .padding(vertical = 10.dp, horizontal = 30.dp)
+                .fillMaxWidth()
+                .height(60.dp)
+        ) {
+            Text(
+                text = "KAMERA",
+                fontSize = 16.sp,
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 3.sp,
+                color = Color.White
+            )
+        }
+
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = Color.White
+            ),
+            shape = RectangleShape,
+            modifier = modifier
+                .padding(bottom = 50.dp, start = 30.dp, end = 30.dp)
+                .fillMaxWidth()
+                .height(60.dp)
+        ) {
+            Text(
+                text = "GAMBAR DARI GALERI",
+                fontSize = 16.sp,
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 3.sp,
+                color = Primary400
+            )
+        }
+
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = modifier
+                .fillMaxSize()
+                .padding(bottom = 50.dp)
+        ) {
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.textButtonColors(
+                    containerColor = Primary400
+                ),
+                shape = RectangleShape,
+                modifier = modifier
+                    .padding(vertical = 10.dp, horizontal = 30.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(
+                    text = "PINDAI PENYAKIT",
+                    fontSize = 16.sp,
+                    fontFamily = Montserrat,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 3.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
