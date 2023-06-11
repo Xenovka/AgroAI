@@ -1,5 +1,14 @@
 package com.capstone.agroai.ui.screen.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,8 +26,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +48,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import coil.compose.rememberAsyncImagePainter
+import com.capstone.agroai.CameraView
 import com.capstone.agroai.R
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
@@ -44,10 +59,104 @@ import com.capstone.agroai.ui.theme.Montserrat
 import com.capstone.agroai.ui.theme.Primary400
 import com.capstone.agroai.ui.theme.Primary600
 import com.capstone.agroai.ui.theme.Primary900
+import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
+class HomeScreen : ComponentActivity() {
+    private lateinit var outputDirectory: File
+    private lateinit var cameraExecutor: ExecutorService
+
+    private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
+
+    private lateinit var photoUri: Uri
+    private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if(isGranted) {
+            Log.i("permission", "Permission Granted")
+            shouldShowCamera.value = true
+        } else {
+            Log.i("permission", "Permission Denied")
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            if(shouldShowCamera.value) {
+                CameraView(
+                    outputDirectory = outputDirectory,
+                    executor = cameraExecutor,
+                    onImageCaptured = ::handleImageCapture,
+                    onError = { Log.e("agroai", "View error: ", it) }
+                )
+            }
+
+            AgroAITheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    HomeContent(
+                        onRequestCamera = { requestCameraPermission() },
+                        shouldShowPhoto = shouldShowPhoto,
+                        photoUri = photoUri
+                    )
+                }
+            }
+        }
+
+        outputDirectory = getOutputDirectory()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun requestCameraPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED -> {
+                Log.i("permission", "Permission already granted")
+                shouldShowCamera.value = true
+            }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CAMERA
+            ) -> Log.i("permission", "Show camera permission dialog")
+
+            else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun handleImageCapture(uri: Uri) {
+        Log.i("agroai", "Image Captured: $uri")
+        shouldShowCamera.value = false
+
+        photoUri = uri
+        shouldShowPhoto.value = true
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = externalMediaDirs.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+
+        return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+}
 
 @Composable
-fun HomeScreen(
-    modifier : Modifier = Modifier
+fun HomeContent(
+    onRequestCamera: () -> Unit,
+    modifier : Modifier = Modifier,
+    shouldShowPhoto: MutableState<Boolean>,
+    photoUri: Uri
 ) {
     var expanded by remember { mutableStateOf(false) }
     val items = listOf("Jagung", "Tomat", "Padi", "Teh", "Kentang", "Cabai", "Kacang")
@@ -140,18 +249,26 @@ fun HomeScreen(
                 .padding(horizontal = 30.dp)
                 .background(Primary600)
         ) {
-            Text(
-                text = "Your Image",
-                fontFamily = Montserrat,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                color = Color.White,
-            )
+            if(shouldShowPhoto.value) {
+                Image(
+                    painter = rememberAsyncImagePainter(photoUri),
+                    contentDescription = null,
+                    modifier = modifier.fillMaxSize()
+                )
+            } else {
+                Text(
+                    text = "Your Image",
+                    fontFamily = Montserrat,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                )
+            }
         }
 
         Button(
-            onClick = {},
+            onClick = { onRequestCamera() },
             colors = ButtonDefaults.textButtonColors(
                 containerColor = Primary400
             ),
@@ -226,6 +343,12 @@ fun HomeScreen(
 @Composable
 fun PreviewHomeScreen() {
     AgroAITheme {
-        HomeScreen()
+        HomeContent(
+            onRequestCamera = {},
+            shouldShowPhoto = remember {
+                mutableStateOf(false)
+            },
+            photoUri = Uri.EMPTY
+        )
     }
 }
