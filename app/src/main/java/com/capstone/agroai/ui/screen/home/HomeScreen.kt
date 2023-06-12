@@ -269,9 +269,7 @@ fun MyButton(
     text: String
 ) {
     Button(
-        onClick = {
-            onClick()
-        },
+        onClick = onClick,
         colors = ButtonDefaults.textButtonColors(
             containerColor = containerColor
         ),
