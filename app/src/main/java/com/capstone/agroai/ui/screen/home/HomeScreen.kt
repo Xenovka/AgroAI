@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -80,10 +84,18 @@ fun HomeScreen(
     modifier : Modifier = Modifier,
 ) {
     val context = LocalContext.current
+
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
     var rowSize by remember { mutableStateOf(Size.Zero) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) {
+        imageUri = it
+    }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicturePreview()
@@ -190,6 +202,15 @@ fun HomeScreen(
                 .padding(horizontal = 30.dp)
                 .background(Primary600)
         ) {
+            imageUri?.let {
+                bitmap = if(Build.VERSION.SDK_INT < 28) {
+                    MediaStore.Images.Media.getBitmap(context.contentResolver,it)
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    ImageDecoder.decodeBitmap(source)
+                }
+            }
+
             if(bitmap != null) {
                 Image(
                     bitmap = bitmap?.asImageBitmap()!!,
@@ -233,7 +254,9 @@ fun HomeScreen(
         }
 
         Button(
-            onClick = {},
+            onClick = {
+                galleryLauncher.launch("image/*")
+            },
             colors = ButtonDefaults.textButtonColors(
                 containerColor = Color.White
             ),
