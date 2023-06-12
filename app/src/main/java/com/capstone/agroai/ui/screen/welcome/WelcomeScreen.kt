@@ -25,7 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.capstone.agroai.R
+import com.capstone.agroai.ui.navigation.Screen
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
@@ -35,7 +38,8 @@ import com.capstone.agroai.ui.theme.Primary900
 
 @Composable
 fun WelcomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateTo: (String) -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Image(
@@ -116,7 +120,7 @@ fun WelcomeScreen(
             )
 
             Button(
-                onClick = {},
+                onClick = { navigateTo(Screen.Home.route) },
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.White
                 ),
@@ -143,6 +147,6 @@ fun WelcomeScreen(
 @Composable
 fun PreviewWelcomeScreen() {
     AgroAITheme {
-        WelcomeScreen()
+        WelcomeScreen(navigateTo = {})
     }
 }
