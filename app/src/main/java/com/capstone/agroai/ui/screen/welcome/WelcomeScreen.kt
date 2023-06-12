@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -85,28 +85,17 @@ fun WelcomeScreen(
                 color = Color.White,
             )
 
-            Button(
-                onClick = {},
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = Primary400,
-                    disabledContainerColor = Primary200
-                ),
-                enabled = false,
-                shape = RectangleShape,
+            MyButton(
+                onClick = { navigateTo(Screen.Home.route) },
                 modifier = modifier
-                    .padding(top = 37.dp, bottom = 15.dp)
-                    .width(320.dp)
-                    .height(60.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.register).uppercase(),
-                    fontSize = 16.sp,
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 3.sp,
-                    color = Color.White
-                )
-            }
+                    .padding(top = 37.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)
+                    .fillMaxWidth()
+                    .height(60.dp),
+                text = stringResource(R.string.register).uppercase(),
+                textColor = Color.White,
+                isEnabled = false,
+                containerColor = Primary400
+            )
 
             Text(
                 text = "or",
@@ -117,27 +106,48 @@ fun WelcomeScreen(
                 modifier = modifier.padding(bottom = 15.dp)
             )
 
-            Button(
+            MyButton(
                 onClick = { navigateTo(Screen.Home.route) },
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = Color.White
-                ),
-                shape = RectangleShape,
                 modifier = modifier
-                    .padding(bottom = 50.dp)
-                    .width(320.dp)
-                    .height(60.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.continue_as_guest),
-                    fontSize = 16.sp,
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 3.sp,
-                    color = Primary400
-                )
-            }
+                    .padding(bottom = 50.dp, start = 10.dp, end = 10.dp)
+                    .fillMaxWidth()
+                    .height(60.dp),
+                text = stringResource(R.string.continue_as_guest),
+                textColor = Primary400,
+                isEnabled = true,
+                containerColor = Color.White
+            )
         }
+    }
+}
+
+@Composable
+fun MyButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color,
+    containerColor: Color,
+    isEnabled: Boolean
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = containerColor,
+            disabledContainerColor = Primary200
+        ),
+        enabled = isEnabled,
+        shape = RectangleShape,
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontFamily = Montserrat,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 3.sp,
+            color = textColor
+        )
     }
 }
 
