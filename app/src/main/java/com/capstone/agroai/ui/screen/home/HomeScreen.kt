@@ -70,11 +70,9 @@ fun checkCameraPermission(
 ) {
     val permissionCheckResult = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
     if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-        // Open camera because permission is already granted
         Log.i("agroai", "Permission previously granted")
         cameraLauncher.launch()
     } else {
-        // Request a permission
         launcher.launch(Manifest.permission.CAMERA)
     }
 }
@@ -230,51 +228,21 @@ fun HomeScreen(
             }
         }
 
-        Button(
+        MyButton(
             onClick = {
                 checkCameraPermission(context, cameraLauncher, launcher)
             },
-            colors = ButtonDefaults.textButtonColors(
-                containerColor = Primary400
-            ),
-            shape = RectangleShape,
-            modifier = modifier
-                .padding(vertical = 10.dp, horizontal = 30.dp)
-                .fillMaxWidth()
-                .height(60.dp)
-        ) {
-            Text(
-                text = "KAMERA",
-                fontSize = 16.sp,
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 3.sp,
-                color = Color.White
-            )
-        }
+            containerColor = Primary400,
+            textColor = Color.White,
+            text = "KAMERA"
+        )
 
-        Button(
-            onClick = {
-                galleryLauncher.launch("image/*")
-            },
-            colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.White
-            ),
-            shape = RectangleShape,
-            modifier = modifier
-                .padding(bottom = 50.dp, start = 30.dp, end = 30.dp)
-                .fillMaxWidth()
-                .height(60.dp)
-        ) {
-            Text(
-                text = "GAMBAR DARI GALERI",
-                fontSize = 16.sp,
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 3.sp,
-                color = Primary400
-            )
-        }
+        MyButton(
+            onClick = { galleryLauncher.launch("image/*") },
+            containerColor = Color.White,
+            textColor = Primary400,
+            text = "GAMBAR DARI GALERI"
+        )
 
         Box(
             contentAlignment = Alignment.BottomCenter,
@@ -282,27 +250,45 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(bottom = 50.dp)
         ) {
-            Button(
+            MyButton(
                 onClick = {},
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = Primary400
-                ),
-                shape = RectangleShape,
-                modifier = modifier
-                    .padding(vertical = 10.dp, horizontal = 30.dp)
-                    .fillMaxWidth()
-                    .height(60.dp)
-            ) {
-                Text(
-                    text = "PINDAI PENYAKIT",
-                    fontSize = 16.sp,
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 3.sp,
-                    color = Color.White
-                )
-            }
+                containerColor = Primary400,
+                textColor = Color.White,
+                text = "PINDAI PENYAKIT"
+            )
         }
+    }
+}
+
+@Composable
+fun MyButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color,
+    textColor: Color,
+    text: String
+) {
+    Button(
+        onClick = {
+            onClick()
+        },
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = containerColor
+        ),
+        shape = RectangleShape,
+        modifier = modifier
+            .padding(top = 10.dp, start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+            .height(60.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontFamily = Montserrat,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 3.sp,
+            color = textColor
+        )
     }
 }
 
