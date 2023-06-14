@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,12 +57,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.core.content.ContextCompat
 import com.capstone.agroai.R
+import com.capstone.agroai.TensorFlowHelper
+import com.capstone.agroai.TensorFlowHelper.classifyImage
+import com.capstone.agroai.TensorFlowHelper.imageSize
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
 import com.capstone.agroai.ui.theme.Primary400
 import com.capstone.agroai.ui.theme.Primary600
 import com.capstone.agroai.ui.theme.Primary900
+import kotlinx.coroutines.launch
 
 fun checkCameraPermission(
     context: Context,
@@ -82,12 +87,14 @@ fun HomeScreen(
     modifier : Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
     var rowSize by remember { mutableStateOf(Size.Zero) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var classificationResult by remember { mutableStateOf("") }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -205,18 +212,16 @@ fun HomeScreen(
                     MediaStore.Images.Media.getBitmap(context.contentResolver,it)
                 } else {
                     val source = ImageDecoder.createSource(context.contentResolver, it)
-                    ImageDecoder.decodeBitmap(source)
+                    ImageDecoder.decodeBitmap(
+                        source
+                    ) { decoder, _, _ ->
+                        decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                        decoder.isMutableRequired = true
+                    }
                 }
             }
 
-            if(bitmap != null) {
-                Image(
-                    bitmap = bitmap?.asImageBitmap()!!,
-                    contentDescription = null,
-                    modifier = modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
-            } else {
+            if(bitmap == null) {
                 Text(
                     text = "Your Image",
                     fontFamily = Montserrat,
@@ -224,6 +229,15 @@ fun HomeScreen(
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     color = Color.White,
+                )
+            }
+
+            bitmap?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
             }
         }
@@ -251,7 +265,17 @@ fun HomeScreen(
                 .padding(bottom = 50.dp)
         ) {
             MyButton(
-                onClick = {},
+                onClick = {
+                    bitmap?.let {
+                        coroutineScope.launch {
+                            val scaledBitmap = Bitmap.createScaledBitmap(it, imageSize, imageSize, false)
+                            classifyImage(context = context, image = scaledBitmap) { disease ->
+                                classificationResult = disease
+                                Log.i("imageclassified", "Image is classified as: $classificationResult")
+                            }
+                        }
+                    }
+                },
                 containerColor = Primary400,
                 textColor = Color.White,
                 text = "PINDAI PENYAKIT"
