@@ -56,10 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.core.content.ContextCompat
+import com.capstone.agroai.Helpers
 import com.capstone.agroai.R
-import com.capstone.agroai.TensorFlowHelper
-import com.capstone.agroai.TensorFlowHelper.classifyImage
-import com.capstone.agroai.TensorFlowHelper.imageSize
+import com.capstone.agroai.tensor.PotatoClassification
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
@@ -87,7 +86,6 @@ fun HomeScreen(
     modifier : Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var expanded by remember { mutableStateOf(false) }
@@ -119,7 +117,7 @@ fun HomeScreen(
         }
     }
 
-    val items = listOf("Jagung", "Tomat", "Padi", "Teh", "Kentang", "Cabai", "Kacang")
+    val items = listOf("Jagung", "Teh", "Kentang")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -267,11 +265,16 @@ fun HomeScreen(
             MyButton(
                 onClick = {
                     bitmap?.let {
-                        coroutineScope.launch {
-                            val scaledBitmap = Bitmap.createScaledBitmap(it, imageSize, imageSize, false)
-                            classifyImage(context = context, image = scaledBitmap) { disease ->
-                                classificationResult = disease
-                                Log.i("imageclassified", "Image is classified as: $classificationResult")
+                        val scaledBitmap = Bitmap.createScaledBitmap(it, 224, 224, false)
+                        when(items[selectedIndex]) {
+                            "Jagung" -> {
+                                classificationResult = Helpers.classificationHelper(context, "Jagung", scaledBitmap)
+                            }
+                            "Kentang" -> {
+                                classificationResult = Helpers.classificationHelper(context, "Kentang", scaledBitmap)
+                            }
+                            "Teh" -> {
+                                classificationResult = Helpers.classificationHelper(context, "Teh", scaledBitmap)
                             }
                         }
                     }
