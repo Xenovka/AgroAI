@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +33,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.capstone.agroai.R
+import com.capstone.agroai.di.Injection
+import com.capstone.agroai.ui.ViewModelFactory
+import com.capstone.agroai.ui.common.UiState
 import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Primary400
@@ -43,8 +48,41 @@ import com.capstone.agroai.ui.theme.Primary900
 @Composable
 fun DetailScreen(
     navigateBack: () -> Unit,
+    viewModel: DetailViewModel = viewModel(
+        factory = ViewModelFactory(
+            Injection.provideRepository()
+        )
+    ),
     disease: String,
     imageUriString: String,
+) {
+    viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
+        when(uiState) {
+            is UiState.Loading -> {
+                viewModel.getClassificationByName(disease)
+            }
+            is UiState.Success -> {
+                val data = uiState.data
+                DetailContent(
+                    navigateBack,
+                    data.diseaseNameIndonesia,
+                    imageUriString,
+                    data.definition,
+                    data.causes
+                )
+            }
+            is UiState.Error -> {}
+        }
+    }
+}
+
+@Composable
+fun DetailContent(
+    navigateBack: () -> Unit,
+    disease: String,
+    imageUriString: String,
+    definition: String,
+    causes: String,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -119,7 +157,7 @@ fun DetailScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.lorem),
+                    text = definition,
                     fontFamily = Libre,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -134,7 +172,7 @@ fun DetailScreen(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.disease_howtocure),
+                    text = stringResource(R.string.disease_causes, disease),
                     fontFamily = Libre,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
@@ -143,7 +181,7 @@ fun DetailScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.lorem),
+                    text = causes,
                     fontFamily = Libre,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -167,7 +205,7 @@ fun DetailScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.lorem),
+                    text = stringResource(R.string.under_development),
                     fontFamily = Libre,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -180,8 +218,8 @@ fun DetailScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewDetailScreen() {
+fun PreviewDetailContent() {
     AgroAITheme {
-        DetailScreen({}, "", "")
+        DetailContent({}, "", "", "", "")
     }
 }

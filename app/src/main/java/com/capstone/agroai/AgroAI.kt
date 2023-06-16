@@ -67,8 +67,8 @@ fun AgroAI(
                     navigateBack = {
                         navController.navigateUp()
                     },
-                    disease,
-                    imageUriString
+                    disease = disease,
+                    imageUriString = imageUriString
                 )
             }
         }

@@ -10,7 +10,8 @@
     <string name="continue_as_guest">MASUK SEBAGAI TAMU</string>
     <string name="back">Back</string>
     <string name="disease_description">Apa itu %s?</string>
-    <string name="disease_howtocure">Bagaimana penanganannya?</string>
+    <string name="disease_causes">Penyebab %s?</string>
     <string name="disease_drugs">Rekomendasi Obat</string>
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at velit nec purus pretium aliquet. Etiam tempor quam lacus, vitae tincidunt nibh dignissim sed. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque suscipit ultricies arcu at fringilla. Ut lobortis et nunc vel convallis. Sed non egestas leo. Mauris eu urna mauris. Vestibulum tincidunt massa id consectetur condimentum.</string>
+    <string name="under_development">Feature\'s Under Development</string>
 </resources>
