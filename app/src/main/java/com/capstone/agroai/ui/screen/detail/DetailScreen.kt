@@ -1,5 +1,6 @@
 package com.capstone.agroai.ui.screen.detail
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,9 @@ import com.capstone.agroai.ui.theme.Primary900
 
 @Composable
 fun DetailScreen(
+    navigateBack: () -> Unit,
+    disease: String,
+    imageUriString: String,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -52,8 +56,19 @@ fun DetailScreen(
             .verticalScroll(state = scrollState)
     ) {
         Box {
+            AsyncImage(
+                model = Uri.parse(imageUriString),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+            )
+
             Button(
-                onClick = {},
+                onClick = {
+                    navigateBack()
+                },
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Primary400
@@ -65,17 +80,10 @@ fun DetailScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.back))
+                    contentDescription = stringResource(R.string.back),
+                    tint = Color.White
+                )
             }
-
-            AsyncImage(
-                model = "https://www.cropscience.bayer.us/-/media/Bayer-CropScience/Country-United-States-Internet/Images/Learning-Center/Articles/corn-diseases-threaten-yields/mature-lesions-from-gray-leaf-spot.ashx?h=200&iar=0&w=300&hash=8B1235871D07237E8808DEE271CC6322",
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            )
         }
 
         Column(
@@ -86,7 +94,7 @@ fun DetailScreen(
                 .fillMaxSize()
         ) {
             Text(
-                text = "Wheat Usarium Head Blight",
+                text = disease,
                 textAlign = TextAlign.Center,
                 lineHeight = 30.sp,
                 fontFamily = Libre,
@@ -102,7 +110,7 @@ fun DetailScreen(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(R.string.disease_description, "Wheat Usarium Head Blight"),
+                    text = stringResource(R.string.disease_description, disease),
                     fontFamily = Libre,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
@@ -174,6 +182,6 @@ fun DetailScreen(
 @Composable
 fun PreviewDetailScreen() {
     AgroAITheme {
-        DetailScreen()
+        DetailScreen({}, "", "")
     }
 }

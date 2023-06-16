@@ -5,9 +5,9 @@ sealed class Screen(val route: String) {
 
     object Home: Screen("home")
 
-    object Detail: Screen("detail")
+    object Detail: Screen("detail/{disease}/{imageUri}")
 
-    object History: Screen("history")
-
-    object Profile: Screen("profile")
+//    object History: Screen("history")
+//
+//    object Profile: Screen("profile")
 }

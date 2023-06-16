@@ -7,10 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.capstone.agroai.ui.navigation.Screen
+import com.capstone.agroai.ui.screen.detail.DetailScreen
 import com.capstone.agroai.ui.screen.home.HomeScreen
 import com.capstone.agroai.ui.screen.welcome.WelcomeScreen
 import com.capstone.agroai.ui.theme.AgroAITheme
@@ -48,7 +51,25 @@ fun AgroAI(
             }
 
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(navController = navController)
+            }
+
+            composable(
+                route = Screen.Detail.route,
+                arguments = listOf(
+                    navArgument("disease") { type = NavType.StringType},
+                    navArgument("imageUri") { type = NavType.StringType }
+                )
+            ) {
+                val disease = it.arguments?.getString("disease") ?: ""
+                val imageUriString = it.arguments?.getString("imageUri") ?: ""
+                DetailScreen(
+                    navigateBack = {
+                        navController.navigateUp()
+                    },
+                    disease,
+                    imageUriString
+                )
             }
         }
     }

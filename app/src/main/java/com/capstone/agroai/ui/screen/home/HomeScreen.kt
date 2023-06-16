@@ -36,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,21 +50,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.capstone.agroai.Helpers
 import com.capstone.agroai.R
-import com.capstone.agroai.tensor.PotatoClassification
-import com.capstone.agroai.ui.theme.AgroAITheme
 import com.capstone.agroai.ui.theme.Libre
 import com.capstone.agroai.ui.theme.Montserrat
 import com.capstone.agroai.ui.theme.Primary400
 import com.capstone.agroai.ui.theme.Primary600
 import com.capstone.agroai.ui.theme.Primary900
-import kotlinx.coroutines.launch
+import java.nio.charset.StandardCharsets
 
 fun checkCameraPermission(
     context: Context,
@@ -84,6 +81,7 @@ fun checkCameraPermission(
 @Composable
 fun HomeScreen(
     modifier : Modifier = Modifier,
+    navController: NavController
 ) {
     val context = LocalContext.current
 
@@ -277,6 +275,9 @@ fun HomeScreen(
                                 classificationResult = Helpers.classificationHelper(context, "Teh", scaledBitmap)
                             }
                         }
+
+                        val imageUriString = Uri.encode(imageUri.toString(), StandardCharsets.UTF_8.toString())
+                        navController.navigate("detail/$classificationResult/$imageUriString")
                     }
                 },
                 containerColor = Primary400,
@@ -314,13 +315,5 @@ fun MyButton(
             letterSpacing = 3.sp,
             color = textColor
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    AgroAITheme {
-        HomeScreen()
     }
 }
